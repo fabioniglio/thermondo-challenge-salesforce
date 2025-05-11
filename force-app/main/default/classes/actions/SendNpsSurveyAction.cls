@@ -1,0 +1,49 @@
+public with sharing class SendNpsSurveyAction {
+
+    public class InputVariables {
+        @InvocableVariable(required=true)
+        public Id orderId;
+    }
+
+    public class OutputVariables {
+        @InvocableVariable public Id orderId;
+        @InvocableVariable public Boolean success;
+        @InvocableVariable public String message;
+    }
+
+    @InvocableMethod(label='Send NPS Survey to Customer')
+    public static List<OutputVariables> sendSurvey(List<InputVariables> inputs) {
+        List<OutputVariables> outputs = new List<OutputVariables>();
+        List<Id> orderIds = new List<Id>();
+
+        for (InputVariables input : inputs) {
+            if (input.orderId != null) {
+                orderIds.add(input.orderId);
+            }
+        }
+
+        List<Order> orders = OrderSelector.selectByIdsWithContact(orderIds);
+
+        try {
+            Boolean sent = new NpsSurveyService().send(orders);
+
+            for (Order o : orders) {
+                OutputVariables output = new OutputVariables();
+                output.orderId = o.Id;
+                output.success = sent;
+                output.message = sent ? 'Email sent successfully' : 'Failed to send email';
+                outputs.add(output);
+            }
+        } catch (Exception ex) {
+            for (Order o : orders) {
+                OutputVariables output = new OutputVariables();
+                output.orderId = o.Id;
+                output.success = false;
+                output.message = 'Error: ' + ex.getMessage();
+                outputs.add(output);
+            }
+        }
+
+        return outputs;
+    }
+}
