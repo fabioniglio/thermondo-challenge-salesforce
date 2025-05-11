@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: ⭕️ thermondo-nps Mock API specification
+  description: |-
+    This Mock API is to be used for our Senior Salesforce Developer Coding Challenge
+  contact:
+    email: salesforce@thermondo.de
+  license:
+    name: Restricted License, this API is not public and for internal use only
+  version: 0.1.0
+
+servers:
+  - url: 'https://salesforce-coding-challenge.herokuapp.com'
+    description: Mock API Server
+
+security:
+  - basicAuth: []
+
+paths:
+  /orders:
+    post:
+      tags:
+        - nps
+      summary: send NPS email to customer
+      description: |-
+        This endpoint can be used to insert Orders in the NPS Service.\
+        Each new Order will trigger an Email to the customer and send out an NPS survey.\
+        You can send up to 30 Orders at once.
+      requestBody:
+        description: Array of Orders (maximum 30 Orders)
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        '200':
+          description: SUCCESS
+        '400':
+          description: BAD_PAYLOAD
+        '500':
+          description: SERVER_ERROR
+
+components:
+  schemas:
+    Order:
+      type: object
+      required:
+        - sfId
+        - orderNumber
+        - customerEmail
+      properties:
+        sfId:
+          type: string
+          description: Order Record SF Id
+          example: '8015E000003LfJXQA0'
+        orderNumber:
+          type: string
+          description: Unique Order Number
+          example: '007'
+        customerEmail:
+          type: string
+          description: 'Email Address of the Customer'
+          example: 'customerAddress@example.com'
+
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
