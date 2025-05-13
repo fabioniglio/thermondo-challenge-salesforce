@@ -46,13 +46,26 @@ public with sharing class SendNpsSurveyAction {
         try {
             Boolean sent = new NpsSurveyService().send(filteredOrders);
 
+            List<Order> toUpdate = new List<Order>();
+
             for (Order o : orders) {
                 OutputVariables output = new OutputVariables();
                 output.orderId = o.Id;
                 output.success = sent;
                 output.message = sent ? 'Email sent successfully' : 'Failed to send email';
                 outputs.add(output);
+
+                if (sent) {
+                    o.Survey_Sent__c = true;
+                    toUpdate.add(o);
+                }
             }
+
+            if (!toUpdate.isEmpty()) {
+                update toUpdate;
+            }
+
+            
         } catch (Exception ex) {
             for (Order o : orders) {
                 OutputVariables output = new OutputVariables();
