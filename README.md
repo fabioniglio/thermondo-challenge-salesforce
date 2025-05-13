@@ -38,3 +38,15 @@ In the next step we would like you to implement a simple Invocable Apex Action t
 Finishing these tasks should take about 2-3 hours, but we are all about **'quality > speed'**, so it's better to deliver a clean MVP and leave some TODOs open.
 
 Try to produce something that is at least minimally functional. Part of the exercise is to see what you prioritize first when you have a limited amount of time. For any unfinished tasks, please do add `TODO` comments to your code with a short explanation. You will be given an opportunity later to go into more detail and explain how you would go about finishing those tasks.
+
+
+## ✅ My Implementation
+
+### 🔧 Technologies Used
+
+- Salesforce DX (SFDX)
+- Apex Common (fflib)
+- ApexMocks for unit tests
+- Named Credential for secure external callouts
+- Flow for post-fulfillment automation
+
