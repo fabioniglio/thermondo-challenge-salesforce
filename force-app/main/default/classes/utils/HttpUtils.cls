@@ -6,12 +6,12 @@ public with sharing class HttpUtils {
      * @param payload Object to be JSON serialized
      * @return HttpResponse from the callout
      */
-    public static HttpResponse postJson(String namedCredential, Object payload) {
+    public static HttpResponse postJson(String namedCredential, Object body) {
         HttpRequest req = new HttpRequest();
         req.setMethod('POST');
         req.setEndpoint('callout:' + namedCredential);
         req.setHeader('Content-Type', 'application/json');
-        req.setBody(JSON.serialize(payload));
+        req.setBody(JSON.serialize(body));
 
         Http http = new Http();
         return http.send(req);
