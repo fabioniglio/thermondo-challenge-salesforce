@@ -5,8 +5,25 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>Order.Survey_Sent__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Order</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Order_After_Trigger</members>
+		<members>Send_NPS_Survey_On_Order_Fulfilled</members>
+		<name>Flow</name>
+	</types>
+	<types>
 		<members>*</members>
 		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>Admin</members>
+		<name>Profile</name>
 	</types>
 	<version>63.0</version>
 </Package>

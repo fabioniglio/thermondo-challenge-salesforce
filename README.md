@@ -28,7 +28,7 @@ In the next step we would like you to implement a simple Invocable Apex Action t
 
 ### ✨ Bonus Points:
 
-* [] layer your Code (use [apex-common](https://github.com/apex-enterprise-patterns/fflib-apex-common) if you like)
+* [x] layer your Code (use [apex-common](https://github.com/apex-enterprise-patterns/fflib-apex-common) if you like)
 * [x] use Inversion of Control to write true unit tests and not integration tests
 * [x] make sure customers don't get duplicate emails
 * [x] think of error handling and return them to the Flow for the Admins to handle
