@@ -11,18 +11,17 @@ public with sharing class NpsSurveyService {
     }
 
     public Boolean send(List<Order> orders) {
-        List<NpsHttpSender.SurveyRequest> payload = new List<NpsHttpSender.SurveyRequest>();
-
+        if (orders == null || orders.isEmpty()) return true;
+    
+        List<NpsSurveyRequest> payload = new List<NpsSurveyRequest>();
         for (Order o : orders) {
             if (o.BillToContact != null && String.isNotBlank(o.BillToContact.Email)) {
-                payload.add(new NpsHttpSender.SurveyRequest(
-                    o.Id,
-                    o.OrderNumber,
-                    o.BillToContact.Email
-                ));
+                payload.add(new NpsSurveyRequest(o.Id, o.OrderNumber, o.BillToContact.Email));
             }
         }
-
+    
+        if (payload.isEmpty()) return true;
+    
         return sender.send(payload);
     }
 }

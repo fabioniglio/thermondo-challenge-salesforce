@@ -24,74 +24,49 @@ private class NpsSurveyServiceTest {
 
     @IsTest
     static void testSendSurvey_successfulCallout() {
-        // Arrange
-        fflib_ApexMocks mocks = new fflib_ApexMocks();
-        INpsHttpSender mockSender = (INpsHttpSender) mocks.mock(INpsHttpSender.class);
+        MockNpsHttpSender mockSender = new MockNpsHttpSender();
+        mockSender.shouldSucceed = true;
 
         Order testOrder = new Order();
         testOrder.Id = '801000000000001';
         testOrder.BillToContact = new Contact(Email = 'test@example.com');
         List<Order> fakeOrders = new List<Order>{ testOrder };
 
-        // Proper chaining of when().thenReturn()
-        ((fflib_MethodReturnValue) mocks
-            .when(mockSender, 'send')
-            .withArguments((List<NpsSurveyRequest>) fflib_Match.anyList()))
-            .thenReturn(true);
-
-
-        // Act
         NpsSurveyService service = new NpsSurveyService(mockSender);
         Boolean result = service.send(fakeOrders);
 
-        // Assert
         System.assertEquals(true, result, 'Survey send should succeed');
-
-        // Verify
-        ((INpsHttpSender) mocks.verify(mockSender, 1))
-            .send((List<NpsHttpSender.SurveyRequest>)fflib_Match.anyList());
+        System.assertEquals(1, mockSender.callCount, 'send() should have been called once');
+        System.assertEquals(1, mockSender.lastPayload.size(), 'Payload should contain one survey request');
+        System.assertEquals(testOrder.Id, mockSender.lastPayload[0].sfId);
     }
 
     @IsTest
     static void testSendSurvey_failedCallout() {
-        // Arrange
-        fflib_ApexMocks mocks = new fflib_ApexMocks();
-        INpsHttpSender mockSender = (INpsHttpSender) mocks.mock(INpsHttpSender.class);
+        MockNpsHttpSender mockSender = new MockNpsHttpSender();
+        mockSender.shouldSucceed = false;
 
         Order testOrder = new Order();
         testOrder.Id = '801000000000002';
         testOrder.BillToContact = new Contact(Email = 'fail@example.com');
         List<Order> fakeOrders = new List<Order>{ testOrder };
 
-        ((fflib_MethodReturnValue) mocks
-        .when(mockSender, 'send')
-        .withArguments((List<NpsSurveyRequest>) fflib_Match.anyList()))
-        .thenReturn(true);
-
-
-        // Act
         NpsSurveyService service = new NpsSurveyService(mockSender);
         Boolean result = service.send(fakeOrders);
 
-        // Assert
-        System.assertEquals(false, result, 'Survey send should fail gracefully');
-
-        ((INpsHttpSender) mocks.verify(mockSender, 1))
-            .send((List<NpsHttpSender.SurveyRequest>)fflib_Match.anyList());
+        System.assertEquals(false, result, 'Survey send should fail');
+        System.assertEquals(1, mockSender.callCount, 'send() should have been called once');
     }
 
     @IsTest
     static void testSendSurvey_noOrders() {
-        fflib_ApexMocks mocks = new fflib_ApexMocks();
-        INpsHttpSender mockSender = (INpsHttpSender) mocks.mock(INpsHttpSender.class);
-        List<Order> emptyList = new List<Order>();
+        MockNpsHttpSender mockSender = new MockNpsHttpSender();
+        List<Order> emptyOrders = new List<Order>();
 
         NpsSurveyService service = new NpsSurveyService(mockSender);
-        Boolean result = service.send(emptyList);
+        Boolean result = service.send(emptyOrders);
 
         System.assertEquals(true, result, 'Empty input should be treated as success');
-
-        ((INpsHttpSender) mocks.verify(mockSender, 0))
-            .send((List<NpsHttpSender.SurveyRequest>)fflib_Match.anyList());
+        System.assertEquals(0, mockSender.callCount, 'send() should not be called for empty input');
     }
 }
