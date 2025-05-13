@@ -7,7 +7,7 @@ public with sharing class OrderSelector {
         }
 
         return [
-            SELECT Id, OrderNumber, BillToContact.Email
+            SELECT Id, OrderNumber, BillToContact.Email, Survey_Sent__c
             FROM Order
             WHERE Id IN :orderIds
         ];

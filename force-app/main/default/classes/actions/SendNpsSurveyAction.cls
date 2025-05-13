@@ -24,8 +24,20 @@ public with sharing class SendNpsSurveyAction {
 
         List<Order> orders = OrderSelector.selectByIdsWithContact(orderIds);
 
+        List<Order> filteredOrders = new List<Order>();
+        for (Order o : orders) {
+            if (!o.Survey_Sent__c) {
+                filteredOrders.add(o);
+            }
+        }
+        orders = filteredOrders;
+        
+        if (orders.isEmpty()) {
+            return new List<OutputVariables>(); 
+        }
+
         try {
-            Boolean sent = new NpsSurveyService().send(orders);
+            Boolean sent = new NpsSurveyService().send(filteredOrders);
 
             for (Order o : orders) {
                 OutputVariables output = new OutputVariables();
