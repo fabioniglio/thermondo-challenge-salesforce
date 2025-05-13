@@ -97,4 +97,32 @@ private class SendNpsSurveyActionTest {
         
         NpsSurveyService.TEST_OVERRIDE = null;
     }
+
+    @IsTest
+static void testInvocable_skipsAlreadySentOrders() {
+   
+    Order order = [SELECT Id, Survey_Sent__c FROM Order LIMIT 1];
+    order.Survey_Sent__c = true;
+    update order;
+
+    
+    NpsSurveyService.TEST_OVERRIDE = new MockNpsHttpSenderFailIfCalled();
+
+    SendNpsSurveyAction.InputVariables input = new SendNpsSurveyAction.InputVariables();
+    input.orderId = order.Id;
+
+    List<SendNpsSurveyAction.InputVariables> inputs = new List<SendNpsSurveyAction.InputVariables>{ input };
+
+    
+    Test.startTest();
+    List<SendNpsSurveyAction.OutputVariables> result = SendNpsSurveyAction.sendSurvey(inputs);
+    Test.stopTest();
+
+    System.assertEquals(1, result.size(), 'Should return one result');
+    System.assertEquals(order.Id, result[0].orderId);
+    System.assertEquals(true, result[0].success, 'Skipped survey should still be success');
+    System.assert(result[0].message != null, 'Should return message');
+
+    NpsSurveyService.TEST_OVERRIDE = null;
+}
 }

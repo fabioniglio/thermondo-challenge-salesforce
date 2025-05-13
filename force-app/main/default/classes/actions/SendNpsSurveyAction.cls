@@ -33,7 +33,14 @@ public with sharing class SendNpsSurveyAction {
         orders = filteredOrders;
         
         if (orders.isEmpty()) {
-            return new List<OutputVariables>(); 
+            for (InputVariables input : inputs) {
+                OutputVariables output = new OutputVariables();
+                output.orderId = input.orderId; 
+                output.success = true;          
+                output.message = 'Survey already sent or nothing to process';
+                outputs.add(output);
+            }
+            return outputs;
         }
 
         try {
